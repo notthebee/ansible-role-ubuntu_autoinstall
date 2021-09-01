@@ -1,4 +1,4 @@
-# ansible-role-ubuntu_autoinstall
+# Ansible Role: Ubuntu Autoinstall
 
 This role will:
 * Download and verify (GPG and SHA256) the newest Ubuntu Server 20.04 ISO
