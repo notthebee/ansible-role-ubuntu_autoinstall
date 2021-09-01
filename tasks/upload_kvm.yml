@@ -63,3 +63,4 @@
   delegate_to: pikvm
   shell:
     cmd: "kvmd-helper-otgmsd-remount ro"
+    
