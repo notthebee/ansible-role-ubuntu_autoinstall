@@ -13,18 +13,11 @@
     path: "{{ target_dir }}/iso/[BOOT]"
     state: absent
 
-- name: Clear the MD5 hashes (we've already checked the ISO for consistency)
-  file:
-    path: "{{ target_dir }}/iso/md5sum.txt"
-    state: absent
-
-
-
 - name: Add the autoinstall parameter to the ISOLinux bootloader
   replace:
     path: "{{ item }}"
     regexp: "---$"
-    replace: "autoinstall ds=nocloud;s=/cdrom/nocloud/  ---"
+    replace: " autoinstall   ds=nocloud;s=/cdrom/nocloud/  ---"
   with_items:
     - "{{ target_dir }}/iso/isolinux/txt.cfg"
 
@@ -32,7 +25,7 @@
   replace:
     path: "{{ item }}"
     regexp: "---$"
-    replace: "autoinstall ds=nocloud{{ grub_escape_seq }}{{ grub_escape_seq }};s=/cdrom/nocloud/  ---"
+    replace: " autoinstall   ds=nocloud\\;s=/cdrom/nocloud/  ---"
   with_items:
     - "{{ target_dir }}/iso/boot/grub/grub.cfg"
     - "{{ target_dir }}/iso/boot/grub/loopback.cfg"
@@ -55,6 +48,36 @@
     modification_time: preserve
     access_time: preserve
 
+- name: Calculate the new MD5 hashes
+  stat:
+    path: "{{ item }}"
+    checksum_algorithm: md5
+  with_items:
+    - "{{ target_dir }}/iso/boot/grub/grub.cfg"
+    - "{{ target_dir }}/iso/boot/grub/loopback.cfg"
+    - "{{ target_dir }}/iso/isolinux/txt.cfg"
+  register: md5sums
+
+- name: Write the new MD5 hash (grub.cfg)
+  lineinfile:
+    line: "{{ md5sums.results[0].stat.checksum }}  ./boot/grub/grub.cfg"
+    search_string: /boot/grub/grub.cfg
+    path: "{{ target_dir }}/iso/md5sum.txt"
+
+- name: Write the new MD5 hash (loopback.cfg)
+  lineinfile:
+    line: "{{ md5sums.results[1].stat.checksum }}  ./boot/grub/loopback.cfg"
+    search_string: loopback.cfg
+    path: "{{ target_dir }}/iso/md5sum.txt"
+
+- name: Write the new MD5 hash (isolinux/txt.cfg)
+  lineinfile:
+    line: "{{ md5sums.results[2].stat.checksum }}  ./isolinux/txt.cfg"
+    search_string: isolinux/txt.cfg
+    path: "{{ target_dir }}/iso/md5sum.txt"
+
+
+  
 - name: Repack the ISO
   shell:
     cmd: "cd {{ target_dir }}/iso && xorriso -as mkisofs -quiet -D -r -V ubuntu-autoinstall -cache-inodes -J -l -joliet-long -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -o {{ target_dir }}/ubuntu_autoinstall.iso ."
