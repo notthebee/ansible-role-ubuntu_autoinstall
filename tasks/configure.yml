@@ -12,4 +12,3 @@
   file:
     path: "{{ target_dir }}"
     state: directory
-
