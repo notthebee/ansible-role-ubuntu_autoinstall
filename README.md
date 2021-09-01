@@ -6,7 +6,7 @@
 * Repack the ISO and (optionally) upload it to [PiKVM](https://pikvm.org/) for futher installation
 
 ### Special thanks to:
-* covertsh for [Ubuntu Autoinstall Generator](https://github.com/covertsh/ubuntu-autoinstall-generator) – this repo is pretty much an Ansible version of his script
+* covertsh for [Ubuntu Autoinstall Generator](https://github.com/covertsh/ubuntu-autoinstall-generator) – this repo is pretty much an Ansible version of their script
 
 
 ### Example playbook:
