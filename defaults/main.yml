@@ -1,0 +1,28 @@
+---
+locale: "en-us.UTF-8"
+
+keyboard_layout: "us"
+
+hostname: "focal-autoinstall"
+
+password: "ubuntu"
+
+username: "ubuntu"
+
+ssh_public_key: ""
+
+boot_drive_serial: ""
+
+pikvm_address: "192.168.178.55"
+
+pikvm_username: "root"
+
+pikvm_password: "root"
+
+target_dir: /opt/ansible-cloud-init
+
+ubuntu_gpg_key: 843938DF228D22F7B3742BC0D94AA3F0EFE21092
+
+grub_escape_seq: \\\
+
+enable_pikvm: false

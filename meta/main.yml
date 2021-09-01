@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  role_name: cloud-init
+  author: notthebee
+  description: Generates an Ubuntu 20.04 Server ISO with a user-data template and optionally deploys it to PiKVM
+  issue_tracker_url: https://github.com/notthebee/ansible-role-cloud-init/issues
+  license: WTFPL
+  min_ansible_version: 2.4
+  platforms:
+  - name: Ubuntu
+    versions:
+    - focal
+  categories:
+  - system
+dependencies: []

@@ -1,0 +1,15 @@
+---
+- name: Install dependencies
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - p7zip-full
+    - xorriso
+    - gpg
+
+- name: Create the temporary directory
+  file:
+    path: "{{ target_dir }}"
+    state: directory
+

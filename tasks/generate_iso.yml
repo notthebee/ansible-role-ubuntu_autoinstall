@@ -1,0 +1,67 @@
+---  
+- name: Create the extraction directory
+  file:
+    path: "{{ target_dir }}/iso"
+    state: directory
+
+- name: Extract the ISO
+  shell:
+    cmd: "7z -y x {{ target_dir }}/focal-live-server-amd64.iso -o{{ target_dir }}/iso"
+
+- name: Delete the [BOOT] folder
+  file:
+    path: "{{ target_dir }}/iso/[BOOT]"
+    state: absent
+
+- name: Clear the MD5 hashes (we've already checked the ISO for consistency)
+  file:
+    path: "{{ target_dir }}/iso/md5sum.txt"
+    state: absent
+
+
+
+- name: Add the autoinstall parameter to the ISOLinux bootloader
+  replace:
+    path: "{{ item }}"
+    regexp: "---$"
+    replace: "autoinstall ds=nocloud;s=/cdrom/nocloud/  ---"
+  with_items:
+    - "{{ target_dir }}/iso/isolinux/txt.cfg"
+
+- name: Add the autoinstall parameter to the GRUB bootloader
+  replace:
+    path: "{{ item }}"
+    regexp: "---$"
+    replace: "autoinstall ds=nocloud{{ grub_escape_seq }}{{ grub_escape_seq }};s=/cdrom/nocloud/  ---"
+  with_items:
+    - "{{ target_dir }}/iso/boot/grub/grub.cfg"
+    - "{{ target_dir }}/iso/boot/grub/loopback.cfg"
+
+
+- name: Create the nocloud directory
+  file:
+    path: "{{ target_dir }}/iso/nocloud"
+    state: directory
+
+- name: Generate and install the user-data file
+  template:
+    src: user-data.j2
+    dest: "{{ target_dir }}/iso/nocloud/user-data"
+
+- name: Create an empty meta-data file
+  file:
+    path: "{{ target_dir }}/iso/nocloud/meta-data"
+    state: touch
+    modification_time: preserve
+    access_time: preserve
+
+- name: Repack the ISO
+  shell:
+    cmd: "cd {{ target_dir }}/iso && xorriso -as mkisofs -quiet -D -r -V ubuntu-autoinstall -cache-inodes -J -l -joliet-long -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -o {{ target_dir }}/ubuntu_autoinstall.iso ."
+
+- name: Clean up
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items: 
+    - "{{ target_dir }}/iso"

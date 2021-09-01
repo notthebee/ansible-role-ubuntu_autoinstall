@@ -1,0 +1,32 @@
+---  
+- name: Download the SHA256 sums
+  get_url:
+    url: "https://cdimage.ubuntu.com/ubuntu-server/focal/daily-live/current/SHA256SUMS"
+    dest: "{{ target_dir }}"
+
+- name: Get the SHA256 sum for the amd64 ISO
+  shell:
+    cmd: "grep amd64 {{ target_dir }}/SHA256SUMS | cut -d ' ' -f1"
+  register: sha256sum
+
+- name: Download the latest Ubuntu Server 20.04 ISO
+  get_url:
+    url: "https://cdimage.ubuntu.com/ubuntu-server/focal/daily-live/current/focal-live-server-amd64.iso"
+    dest: "{{ target_dir }}/focal-live-server-amd64.iso"
+    checksum: "sha256:{{ sha256sum.stdout }}"
+
+- name: Download the GPG keys
+  get_url:
+    url: "https://cdimage.ubuntu.com/ubuntu-server/focal/daily-live/current/SHA256SUMS.gpg"
+    dest: "{{ target_dir }}"
+
+- name: Import the GPG key
+  shell:
+    cmd: "gpg -q --no-default-keyring --keyring '{{ target_dir }}/{{ ubuntu_gpg_key }}.keyring' --keyserver 'hkp://keyserver.ubuntu.com' --recv-keys {{ ubuntu_gpg_key }}"
+    creates: 
+     - "{{ target_dir }}/{{ ubuntu_gpg_key }}.keyring"
+     - "{{ target_dir }}/{{ ubuntu_gpg_key }}.keyring~"
+
+- name: Verify the GPG key
+  shell:
+    cmd: "gpg -q --keyring '{{ target_dir }}/{{ ubuntu_gpg_key }}.keyring' --verify '{{ target_dir }}/SHA256SUMS.gpg' '{{ target_dir }}/SHA256SUMS' 2>/dev/null"

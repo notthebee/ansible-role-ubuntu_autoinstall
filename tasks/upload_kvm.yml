@@ -1,0 +1,65 @@
+---  
+- name: Remount the filesystem read-write
+  delegate_to: pikvm
+  shell:
+    cmd: "kvmd-helper-otgmsd-remount rw"
+
+- name: Create the SSH dir
+  delegate_to: pikvm
+  file:
+    path: "/root/.ssh"
+    state: directory
+    mode: 0700
+
+- name: Copy the private SSH key
+  delegate_to: pikvm
+  copy:
+    src: "{{ ansible_ssh_private_key_file }}"
+    dest: /root/.ssh/id_rsa
+    mode: 0600
+
+- name: Copy the SSH config
+  delegate_to: pikvm
+  copy:
+    content: "Host {{ hostname }}\n   User {{ username }} \n   HostName {{ ansible_host }}\n   IdentityFile ~/.ssh/id_rsa\n   Port {{ security_ssh_port }}"
+    dest: /root/.ssh/config
+    mode: 0600
+
+- name: Upload the ISO
+  delegate_to: pikvm
+  shell:
+    cmd: "rsync -e 'ssh -oStrictHostKeyChecking=no' --checksum {{ hostname }}:{{ target_dir }}/ubuntu_autoinstall.iso /var/lib/kvmd/msd/images/"
+
+- name: Create the .complete file
+  delegate_to: pikvm
+  file:
+    path: /var/lib/kvmd/msd/meta/ubuntu_autoinstall.iso.complete
+    state: touch
+
+- name: Remove the SSH private key and config
+  delegate_to: pikvm
+  file:
+    path: /root/.ssh/
+    state: absent
+
+- name: Eject the current ISO
+  delegate_to: pikvm
+  block: 
+    - name: Eject the current ISO
+      shell:
+        cmd: "kvmd-otgmsd --eject"
+  rescue:
+    - name: Unlock the file system and then try again
+      shell:
+        cmd: "kvmd-helper-otgmsd-unlock unlock && kvmd-otgmsd --eject"
+    
+
+- name: Connect the ISO to the server
+  delegate_to: pikvm
+  shell:
+    cmd: "kvmd-otgmsd --set-image /var/lib/kvmd/msd/images/ubuntu_autoinstall.iso"
+
+- name: Remount the filesystem read-only
+  delegate_to: pikvm
+  shell:
+    cmd: "kvmd-helper-otgmsd-remount ro"
