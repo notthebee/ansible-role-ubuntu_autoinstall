@@ -30,7 +30,6 @@
     - "{{ target_dir }}/iso/boot/grub/grub.cfg"
     - "{{ target_dir }}/iso/boot/grub/loopback.cfg"
 
-
 - name: Create the nocloud directory
   file:
     path: "{{ target_dir }}/iso/nocloud"
