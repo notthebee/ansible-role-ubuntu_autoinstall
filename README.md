@@ -8,26 +8,15 @@
 ### Special thanks to:
 * covertsh for [Ubuntu Autoinstall Generator](https://github.com/covertsh/ubuntu-autoinstall-generator) – this repo is pretty much an Ansible version of their script
 
-
 ### Example playbook:
 ```
 ---
 - hosts: all
   gather_facts: yes
-  become: yes
+  become: no
 
   roles:
     - role: notthebee.ubuntu_autoinstall
-```
-
-### Example inventory:
-```
-[target]
-target ansible_host=192.168.1.2 ansible_user=foo ansible_connection=ssh ansible_ssh_private_key_file=/Users/foo/.ssh/id_rsa
-
-
-[pikvm]
-pikvm ansible_host=192.168.1.3 ansible_user=root ansible_connection=ssh
 ```
 
 ### Variables
