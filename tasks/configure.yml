@@ -7,6 +7,22 @@
     - p7zip-full
     - xorriso
     - gpg
+  when: ansible_os_family != "Darwin"
+
+- name: Install dependencies (macOS)
+  become: no
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - p7zip
+    - xorriso
+    - gnupg
+  when: ansible_os_family == "Darwin"
+
+- name: Launch dirmngr if it isn't running
+  shell:
+    cmd: "ps aux | grep [d]irmngr || dirmngr"
 
 - name: Create the temporary directory
   file:

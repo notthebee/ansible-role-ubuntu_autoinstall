@@ -26,7 +26,9 @@
     creates: 
      - "{{ target_dir }}/{{ ubuntu_gpg_key }}.keyring"
      - "{{ target_dir }}/{{ ubuntu_gpg_key }}.keyring~"
+  ignore_errors: yes
 
 - name: Verify the GPG key
   shell:
     cmd: "gpg -q --keyring '{{ target_dir }}/{{ ubuntu_gpg_key }}.keyring' --verify '{{ target_dir }}/SHA256SUMS.gpg' '{{ target_dir }}/SHA256SUMS' 2>/dev/null"
+  ignore_errors: yes
