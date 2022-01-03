@@ -1,16 +1,20 @@
 #cloud-config
 autoinstall:
   version: 1
-  locale: "{{ locale }}"
+  locale: {{ locale }}
   keyboard:
-    layout: "{{ keyboard_layout }}"
+    layout: {{ keyboard_layout }}
+  refresh-installer: 
+    update: yes
   identity:
-    hostname: "{{ hostname }}"
-    password: "${{ password | password_hash('sha512') }}"
-    username: "{{ username }}"
+    hostname: {{ hostname }}
+    password: {{ password | password_hash('sha512') }}
+    username: {{ username }}
   ssh:
     install-server: true
-    authorized-keys: [ "{{ ssh_public_key }}" ]
+    allow-pw: false
+    authorized-keys: 
+      - {{ ssh_public_key }}
   storage:
     grub:
       reorder_uefi: False

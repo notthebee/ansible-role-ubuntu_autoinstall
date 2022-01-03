@@ -1,6 +1,10 @@
 ---
 locale: "en-us.UTF-8"
 
+iso_arch: "amd64"
+# Valid values are: amd64, arm64
+# ppc64el and s390x haven't been tested yet
+
 keyboard_layout: "us"
 
 hostname: "focal-autoinstall"

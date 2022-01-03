@@ -4,15 +4,15 @@
     url: "https://cdimage.ubuntu.com/ubuntu-server/focal/daily-live/current/SHA256SUMS"
     dest: "{{ target_dir }}"
 
-- name: Get the SHA256 sum for the amd64 ISO
+- name: Get the SHA256 sum for the {{ iso_arch }} ISO
   shell:
-    cmd: "grep amd64 {{ target_dir }}/SHA256SUMS | cut -d ' ' -f1"
+    cmd: "grep {{ iso_arch }} {{ target_dir }}/SHA256SUMS | cut -d ' ' -f1"
   register: sha256sum
 
-- name: Download the latest Ubuntu Server 20.04 ISO
+- name: Download the latest Ubuntu Server 20.04 {{ iso_arch }} ISO
   get_url:
-    url: "https://cdimage.ubuntu.com/ubuntu-server/focal/daily-live/current/focal-live-server-amd64.iso"
-    dest: "{{ target_dir }}/focal-live-server-amd64.iso"
+    url: "https://cdimage.ubuntu.com/ubuntu-server/focal/daily-live/current/focal-live-server-{{ iso_arch }}.iso"
+    dest: "{{ target_dir }}/focal-live-server-{{ iso_arch }}.iso"
     checksum: "sha256:{{ sha256sum.stdout }}"
 
 - name: Download the GPG keys

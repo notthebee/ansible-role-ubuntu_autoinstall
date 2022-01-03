@@ -21,7 +21,8 @@
 
 ### Variables
 * **boot_drive_serial** – the serial number of the drive where you want to install Ubuntu. You can find it out using `ls /dev/disk/by-id`. Make sure to omit the interface (e.g. **ata-** or **scsi-**).
+* **iso_arch** – Architecture of the output ISO file. `amd64` and `arm64` are supported
 
-You can also use **/dev/sd*** to point the installer to the boot drive, but please, for the love of God, **do not** do that on a production server. The installer will **wipe the drive** specified in this playbook without confirmation or remorse.
+
 
 Other variables are more or less self-explanatory and can be found in defaults/main.yml

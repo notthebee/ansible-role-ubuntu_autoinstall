@@ -6,7 +6,7 @@
 
 - name: Extract the ISO
   shell:
-    cmd: "7z -y x {{ target_dir }}/focal-live-server-amd64.iso -o{{ target_dir }}/iso"
+    cmd: "7z -y x {{ target_dir }}/focal-live-server-{{ iso_arch }}.iso -o{{ target_dir }}/iso"
 
 - name: Delete the [BOOT] folder
   file:
@@ -20,6 +20,7 @@
     replace: " autoinstall   ds=nocloud;s=/cdrom/nocloud/  ---"
   with_items:
     - "{{ target_dir }}/iso/isolinux/txt.cfg"
+  when: iso_arch == 'amd64'
 
 - name: Add the autoinstall parameter to the GRUB bootloader
   replace:
@@ -74,10 +75,19 @@
     line: "{{ md5sums.results[2].stat.checksum }}  ./isolinux/txt.cfg"
     search_string: isolinux/txt.cfg
     path: "{{ target_dir }}/iso/md5sum.txt"
+  when: iso_arch == 'amd64'
 
-- name: Repack the ISO
+- name: Repack the ISO (amd64)
   shell:
     cmd: "cd {{ target_dir }}/iso && xorriso -as mkisofs -quiet -D -r -V ubuntu-autoinstall -cache-inodes -J -l -joliet-long -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -o {{ target_dir }}/ubuntu_autoinstall.iso ."
+  when: iso_arch == 'amd64'
+
+
+- name: Repack the ISO (arm64)
+  shell:
+    cmd: "cd {{ target_dir }}/iso && xorriso -as mkisofs -quiet -D -r -V ubuntu-autoinstall -cache-inodes -J -joliet-long -no-emul-boot -e boot/grub/efi.img -partition_cyl_align all -append_partition 2 0xef boot/grub/efi.img -no-emul-boot -o {{ target_dir }}/ubuntu_autoinstall.iso ."
+  when: iso_arch == 'arm64'
+
 
 - name: Clean up
   file:
@@ -88,6 +98,6 @@
 
 - name: Done!
   debug:
-    msg: "The ISO file has been generated in {{target_dir}}"
+    msg: "Done! The ISO file has been generated: {{target_dir}}/ubuntu_autoinstall.iso"
     
   
