@@ -79,13 +79,13 @@
 
 - name: Repack the ISO (amd64)
   shell:
-    cmd: "cd {{ target_dir }}/iso && xorriso -as mkisofs -quiet -D -r -V ubuntu-autoinstall -cache-inodes -J -l -joliet-long -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -o {{ target_dir }}/ubuntu_autoinstall.iso ."
+    cmd: "cd {{ target_dir }}/iso && xorriso -as mkisofs -quiet -D -r -V ubuntu-autoinstall_{{ iso_arch }} -cache-inodes -J -l -joliet-long -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -o {{ target_dir }}/ubuntu_autoinstall_{{ iso_arch }}.iso ."
   when: iso_arch == 'amd64'
 
 
 - name: Repack the ISO (arm64)
   shell:
-    cmd: "cd {{ target_dir }}/iso && xorriso -as mkisofs -quiet -D -r -V ubuntu-autoinstall -cache-inodes -J -joliet-long -no-emul-boot -e boot/grub/efi.img -partition_cyl_align all -append_partition 2 0xef boot/grub/efi.img -no-emul-boot -o {{ target_dir }}/ubuntu_autoinstall.iso ."
+    cmd: "cd {{ target_dir }}/iso && xorriso -as mkisofs -quiet -D -r -V ubuntu-autoinstall_{{ iso_arch }} -cache-inodes -J -joliet-long -no-emul-boot -e boot/grub/efi.img -partition_cyl_align all -append_partition 2 0xef boot/grub/efi.img -no-emul-boot -o {{ target_dir }}/ubuntu_autoinstall_{{ iso_arch }}.iso ."
   when: iso_arch == 'arm64'
 
 
@@ -98,6 +98,6 @@
 
 - name: Done!
   debug:
-    msg: "Done! The ISO file has been generated: {{target_dir}}/ubuntu_autoinstall.iso"
+    msg: "Done! The ISO file has been generated: {{target_dir}}/ubuntu_autoinstall_{{ iso_arch }}.iso"
     
   
