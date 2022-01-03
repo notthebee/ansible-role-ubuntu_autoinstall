@@ -8,19 +8,23 @@
   uri:
     url: "http://{{ pikvm_address }}/api/msd/set_connected?connected=0"
     method: POST
+    status_code: [ 400, 200 ]
     headers:
       X-KVMD-User: "{{ pikvm_username }}"
       X-KVMD-Passwd: "{{ pikvm_password }}"
-  ignore_errors: true
+  register: response
+  changed_when: response.json is not search("MsdDisconnectedError")
 
 - name: Remove the previous ISO
   uri:
     url: "http://{{ pikvm_address }}/api/msd/remove?image=ubuntu_autoinstall.iso"
+    status_code: [ 400, 200 ]
     method: POST
     headers:
       X-KVMD-User: "{{ pikvm_username }}"
       X-KVMD-Passwd: "{{ pikvm_password }}"
-  ignore_errors: true
+  register: response
+  changed_when: response.json is not search("MsdUnknownImageError")
 
 - name: Upload the ISO to PiKVM
   shell:

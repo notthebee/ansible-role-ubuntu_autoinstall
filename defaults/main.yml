@@ -11,9 +11,7 @@ username: "ubuntu"
 
 ssh_public_key: ""
 
-boot_drive_serial: ""
-
-pikvm_address: "192.168.178.55"
+pikvm_address: "pikvm.box"
 
 pikvm_username: "admin"
 

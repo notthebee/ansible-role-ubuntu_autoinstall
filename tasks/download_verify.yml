@@ -20,6 +20,16 @@
     url: "https://cdimage.ubuntu.com/ubuntu-server/focal/daily-live/current/SHA256SUMS.gpg"
     dest: "{{ target_dir }}"
 
+- name: Check if dirmngr is running
+  pids:
+    name: dirmngr
+  register: dirmngr_pids
+
+- name: Launch dirmngr if it isn't running
+  shell:
+    cmd: "dirmngr"
+  when: dirmngr_pids.pids | length == 0
+
 - name: Import the GPG key
   shell:
     cmd: "gpg -q --no-default-keyring --keyring '{{ target_dir }}/{{ ubuntu_gpg_key }}.keyring' --keyserver 'hkp://keyserver.ubuntu.com' --recv-keys {{ ubuntu_gpg_key }}"
@@ -32,3 +42,8 @@
   shell:
     cmd: "gpg -q --keyring '{{ target_dir }}/{{ ubuntu_gpg_key }}.keyring' --verify '{{ target_dir }}/SHA256SUMS.gpg' '{{ target_dir }}/SHA256SUMS' 2>/dev/null"
   ignore_errors: yes
+
+- name: Kill dirmngr if we launched it
+  shell:
+    cmd: "pkill dirmngr"
+  when: dirmngr_pids.pids | length == 0

@@ -75,8 +75,6 @@
     search_string: isolinux/txt.cfg
     path: "{{ target_dir }}/iso/md5sum.txt"
 
-
-  
 - name: Repack the ISO
   shell:
     cmd: "cd {{ target_dir }}/iso && xorriso -as mkisofs -quiet -D -r -V ubuntu-autoinstall -cache-inodes -J -l -joliet-long -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -o {{ target_dir }}/ubuntu_autoinstall.iso ."
@@ -87,3 +85,9 @@
     state: absent
   with_items: 
     - "{{ target_dir }}/iso"
+
+- name: Done!
+  debug:
+    msg: "The ISO file has been generated in {{target_dir}}"
+    
+  

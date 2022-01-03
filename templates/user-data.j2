@@ -6,16 +6,8 @@ autoinstall:
     layout: "{{ keyboard_layout }}"
   identity:
     hostname: "{{ hostname }}"
-    password: "{{ password | password_hash('sha512') }}"
+    password: "${{ password | password_hash('sha512') }}"
     username: "{{ username }}"
-  network:
-    network:
-      version: 2
-      ethernets:
-        enp1s0:
-          critical: true
-          dhcp-identifier: mac
-          dhcp4: true
   ssh:
     install-server: true
     authorized-keys: [ "{{ ssh_public_key }}" ]

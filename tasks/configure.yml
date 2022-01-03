@@ -2,7 +2,11 @@
 - name: Install dependencies
   become: yes
   package:
-    name: "{{ item }}"
+    name:
+      - p7zip-full
+      - xorriso
+      - gpg
+      - curl
     state: present
   with_items:
     - p7zip-full
@@ -13,18 +17,13 @@
 
 - name: Install dependencies (macOS)
   package:
-    name: "{{ item }}"
+    name: 
+      - p7zip
+      - xorriso
+      - gnupg
+      - curl
     state: present
-  with_items:
-    - p7zip
-    - xorriso
-    - gnupg
-    - curl
   when: ansible_os_family == "Darwin"
-
-- name: Launch dirmngr if it isn't running
-  shell:
-    cmd: "ps aux | grep [d]irmngr || dirmngr"
 
 - name: Create the temporary directory
   file:
