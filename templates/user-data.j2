@@ -4,7 +4,7 @@ autoinstall:
   locale: {{ locale }}
   keyboard:
     layout: {{ keyboard_layout }}
-  refresh-installer: 
+  refresh-installer:
     update: yes
   identity:
     hostname: {{ hostname }}
@@ -13,13 +13,15 @@ autoinstall:
   ssh:
     install-server: true
     allow-pw: false
-    authorized-keys: 
+    authorized-keys:
       - {{ ssh_public_key }}
   storage:
     grub:
       reorder_uefi: False
+{% if not enable_swap_file %}
     swap:
       size: 0
+{% endif %}
     config:
     - {ptable: gpt, serial: "{{ boot_drive_serial }}", preserve: false, name: '', grub_device: false, type: disk, id: bootdrive}
 
