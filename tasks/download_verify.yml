@@ -7,7 +7,7 @@
 - name: Get the SHA256 sum for the {{ iso_arch }} ISO
   shell:
     cmd: "grep {{ iso_arch }} {{ target_dir }}/SHA256SUMS | cut -d ' ' -f1"
-  changed_when: "false"
+  changed_when: false
   register: sha256sum
 
 - name: Download the latest Ubuntu Server 20.04 {{ iso_arch }} ISO
@@ -21,19 +21,17 @@
     url: "https://cdimage.ubuntu.com/ubuntu-server/focal/daily-live/current/SHA256SUMS.gpg"
     dest: "{{ target_dir }}"
 
-- name: Install psutil module
-  pip:
-    name: psutil
-
 - name: Check if dirmngr is running
-  pids:
-    name: dirmngr
-  register: dirmngr_pids
+  shell:
+    cmd: pgrep dirmngr
+  failed_when: false
+  changed_when: false
+  register: dirmngr_status
 
 - name: Launch dirmngr if it isn't running
   shell:
     cmd: "dirmngr --daemon"
-  when: dirmngr_pids.pids | length == 0
+  when: dirmngr_status.rc != 0
 
 - name: Import the GPG key
   shell:
@@ -51,4 +49,4 @@
 - name: Kill dirmngr if we launched it
   shell:
     cmd: "pkill dirmngr"
-  when: dirmngr_pids.pids | length == 0
+  when: dirmngr_status.rc != 0
