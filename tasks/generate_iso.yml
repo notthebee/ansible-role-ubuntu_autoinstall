@@ -20,6 +20,25 @@
     path: "{{ target_dir }}/iso/[BOOT]"
     state: absent
 
+- name: Enable HWE kernel in ISOLinux bootloader
+  replace:
+    path: "{{ item }}"
+    regexp: '/casper/(vmlinuz|initrd)'
+    replace: '/casper/hwe-\1'
+  with_items:
+    - "{{ target_dir }}/iso/isolinux/txt.cfg"
+  when: iso_arch == 'amd64' and enable_hwe_kernel | default(False)
+
+- name: Enable HWE kernel in GRUB bootloader
+  replace:
+    path: "{{ item }}"
+    regexp: '/casper/(vmlinuz|initrd)'
+    replace: '/casper/hwe-\1'
+  with_items:
+    - "{{ target_dir }}/iso/boot/grub/grub.cfg"
+    - "{{ target_dir }}/iso/boot/grub/loopback.cfg"
+  when: enable_hwe_kernel | default(False)
+
 - name: Add the autoinstall parameter to the ISOLinux bootloader
   replace:
     path: "{{ item }}"

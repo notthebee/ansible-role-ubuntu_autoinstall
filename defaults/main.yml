@@ -26,3 +26,5 @@ target_dir: "{{ ansible_env.HOME }}/.local/ansible_ubuntu-autoinstall"
 ubuntu_gpg_key: 843938DF228D22F7B3742BC0D94AA3F0EFE21092
 
 enable_pikvm: false
+
+enable_hwe_kernel: false
