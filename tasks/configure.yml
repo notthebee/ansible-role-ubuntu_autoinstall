@@ -7,10 +7,6 @@
       - gpg
       - curl
     state: present
-  with_items:
-    - xorriso
-    - gpg
-    - curl
   when: ansible_os_family != "Darwin"
 
 - name: Install dependencies (macOS)
