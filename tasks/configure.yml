@@ -3,13 +3,11 @@
   become: yes
   package:
     name:
-      - p7zip-full
       - xorriso
       - gpg
       - curl
     state: present
   with_items:
-    - p7zip-full
     - xorriso
     - gpg
     - curl
@@ -17,8 +15,7 @@
 
 - name: Install dependencies (macOS)
   package:
-    name: 
-      - p7zip
+    name:
       - xorriso
       - gnupg
       - curl

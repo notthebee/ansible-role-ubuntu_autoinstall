@@ -1,4 +1,4 @@
----  
+---
 - name: Create the extraction directory
   file:
     path: "{{ target_dir }}/iso"
@@ -6,7 +6,14 @@
 
 - name: Extract the ISO
   shell:
-    cmd: "7z -y x {{ target_dir }}/focal-live-server-{{ iso_arch }}.iso -o{{ target_dir }}/iso"
+    cmd: "xorriso -osirrox on -indev {{ target_dir }}/focal-live-server-{{ iso_arch }}.iso -extract / {{ target_dir }}/iso"
+
+- name: Fix extracted ISO mode
+  file:
+    path: "{{ target_dir }}/iso"
+    mode: "u+w"
+    recurse: yes
+    follow: no
 
 - name: Delete the [BOOT] folder
   file:
@@ -93,11 +100,9 @@
   file:
     path: "{{ item }}"
     state: absent
-  with_items: 
+  with_items:
     - "{{ target_dir }}/iso"
 
 - name: Done!
   debug:
     msg: "Done! The ISO file has been generated: {{target_dir}}/ubuntu_autoinstall_{{ iso_arch }}.iso"
-    
-  
