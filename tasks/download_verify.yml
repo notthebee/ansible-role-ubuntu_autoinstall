@@ -6,7 +6,7 @@
 
 - name: Get the SHA256 sum for the {{ iso_arch }} ISO
   shell:
-    cmd: "grep {{ iso_arch }} {{ target_dir }}/SHA256SUMS | cut -d ' ' -f1"
+    cmd: "grep {{ iso_arch }}.iso {{ target_dir }}/SHA256SUMS | cut -d ' ' -f1"
   changed_when: false
   register: sha256sum
 
